@@ -30,8 +30,8 @@ Number  Start   End     Size    File system  Name       Flags
 
 Then we need to update two lines in each option in boot/extlinux/extlinux.conf. The path for the dtb has to be within our new boot partition. And we need to add the cryptdevice option and change the root device to /dev/mapper/root. In my case these two lines look like:
 
-fdt /boot/linux-image-6.12.11-pinenote-202501281646-00249-g211ba27556cc/rockchip/rk3566-pinenote-v1.2.dtb  
-append cryptdevice=/dev/mmcblk0p8:root root=/dev/mapper/root ignore_loglevel rw rootwait earlycon console=tty0 console=ttyS2,1500000n8 fw_devlink=off quiet loglevel=3 systemd.show_status=auto rd.udev.log_level=3 splash plymouth.ignore-serial-consoles vt.global_cursor_default=0  
+    fdt /boot/linux-image-6.12.11-pinenote-202501281646-00249-g211ba27556cc/rockchip/rk3566-pinenote-v1.2.dtb  
+    append cryptdevice=/dev/mmcblk0p8:root root=/dev/mapper/root ignore_loglevel rw rootwait earlycon console=tty0 console=ttyS2,1500000n8 fw_devlink=off quiet loglevel=3 systemd.show_status=auto rd.udev.log_level=3 splash plymouth.ignore-serial-consoles vt.global_cursor_default=0  
 
 ## Prepairing data
 
@@ -90,7 +90,8 @@ You need to have the follwing packages installed:
     /dev/disk/by-partlabel/uboot_env /uboot_config             vfat          defaults,noauto              0      0
     /dev/mapper/home /home              ext4   defaults	0	0
 
-Make a passphrase for home partition
+Make a passphrase for home partition  
+
     dd if=/dev/random of=~/secret bs=1k count=4
     cryptsetup luksAddKey  /dev/mmcblk0p7 /root/secret
     
@@ -98,7 +99,7 @@ Make a passphrase for home partition
 /etc/cryprtab should look like:
 
     root /dev/mmcblk0p8 none luks,initramfs,keyscript=/usr/share/initramfs-tools/  scripts/unl0kr-keyscript
-    home /dev/mmcblk0p7 /root/vendor luks
+    home /dev/mmcblk0p7 /root/secret luks
 
 
 To enable touch we need to add cyttsp5 to the modules loaded in initramfs:
@@ -111,11 +112,11 @@ There seems to be a race condition loading that module, therefore we need a file
 
 in a file like delay_cyttsp5.conf in /etc/modprobe.d
 
-Now the last thing left is to mount all partitions (in particular home) and
+Now the last thing left is to mount all partitions (in particular home) and  
 
-   update-initramfs -u
-   shutdown -r
-  
+    update-initramfs -u  
+    shutdown -r
+ 
 
 ## Unwanted side effects
 
