@@ -10,15 +10,15 @@ The first step is to make some room for an unencrypted boot partiton. This has t
 
 My parition table after the modifications looks like:  
 
-Number  Start   End     Size    File system  Name       Flags  
- 1      8389kB  75.5MB  67.1MB               uboot  
- 2      75.5MB  77.6MB  2097kB               waveform  
- 3      77.6MB  78.6MB  1049kB               uboot_env  
- 4      78.6MB  146MB   67.1MB               logo  
- 5      146MB   15.9GB  15.7GB  ext4         os1        legacy_boot  
- 6      15.9GB  16.4GB  525MB   ext4         boot  
- 8      16.4GB  31.6GB  15.2GB               root  
- 7      31.6GB  124GB   92.1GB               data   
+    Number  Start   End     Size    File system  Name       Flags  
+    1      8389kB  75.5MB  67.1MB               uboot  
+    2      75.5MB  77.6MB  2097kB               waveform  
+    3      77.6MB  78.6MB  1049kB               uboot_env  
+    4      78.6MB  146MB   67.1MB               logo  
+    5      146MB   15.9GB  15.7GB  ext4         os1        legacy_boot  
+    6      15.9GB  16.4GB  525MB   ext4         boot  
+    8      16.4GB  31.6GB  15.2GB               root  
+    7      31.6GB  124GB   92.1GB               data   
  
 ## Preparing the boot partition
  
@@ -110,7 +110,9 @@ There seems to be a race condition loading that module, therefore we need a file
 
     install cyttsp5 /bin/sh -c 'sleep 2; /sbin/modprobe --ignore-install cyttsp5'
 
-in a file like delay_cyttsp5.conf in /etc/modprobe.d
+in a file like delay_cyttsp5.conf in /etc/modprobe.d.
+
+Finally one has to disable the first boot services of systemd in /etc/systend, because they always think, that now is the first boot and leaving them on results in a bootloop. 
 
 Now the last thing left is to mount all partitions (in particular home) and  
 
